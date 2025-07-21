@@ -1,0 +1,37 @@
+---
+- name: Task 1 & 2
+  hosts: localhost
+  connection: local
+  vars_files:
+    - pass.yml
+    - vars.yml
+
+  tasks:
+    - name: Creating EC2 instances
+      amazon.aws.ec2_instance:
+        name: '{{ item.name }}'
+        key_name: '{{ pem_key_file }}'
+        instance_type: '{{ instance_type }}'
+        security_group: default
+        region: '{{ region }}'
+        aws_access_key: '{{ ec2_access_key }}'
+        aws_secret_key: '{{ ec2_secret_key }}'
+        network_interfaces:
+          - assign_public_ip: true
+        image_id: '{{ item.image_id }}'
+      loop:
+        - { name: 'managed-node-1', image_id: '{{ ubuntu_img_id }}' }
+        - { name: 'managed-node-2', image_id: '{{ ubuntu_img_id }}' } # idempotency nature of ansible
+        - { name: 'managed-node-3', image_id: '{{ awsLinux_img_id }}' }
+
+    - name: Waiting for EC2 to reach running state
+      ansible.builtin.pause:
+        minutes: 5
+
+    - name: Creating Inventory File
+      ansible.builtin.shell:
+        cmd: python3 create_inventory.py
+
+    - name: Setup Password-less Authentication
+      ansible.builtin.shell:
+        cmd: python3 pass_less_auth.py

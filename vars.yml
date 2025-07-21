@@ -1,0 +1,5 @@
+pem_key_file: 'ec2_key_pair'
+region: ap-southeast-2
+instance_type: t2.micro
+ubuntu_img_id: ami-010876b9ddd38475e
+awsLinux_img_id: ami-00839deb72faa8a04

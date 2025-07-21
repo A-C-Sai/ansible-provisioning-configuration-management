@@ -1,0 +1,13 @@
+---
+- name: Task 3
+  hosts: all
+  become: true
+
+  tasks:
+    # - name: Print all ansible gathered facts
+    #   ansible.builtin.debug:
+    #     var: ansible_facts
+
+    - name: Shutdown Only Ubuntu Instances
+      ansible.builtin.command: /sbin/shutdown -t now
+      when: ansible_facts['os_family'] == "Debian"
